@@ -9,18 +9,18 @@
 <!--<select itemPath="api.query.categorymembers.cm" produces="XML" > -->
     <select itemPath="data.cm" produces="XML" >
       <urls>
-        <url env="all">http://{site}/w/api.php?action=query&amp;list=categorymembers&amp;cmtitle=Category:{category}&amp;cmprop=ids%7ctitle%7ctype%7ctimestamp&amp;format=xml</url>
+        <url env="all">http://{site}/w/api.php?action=query&amp;list=categorymembers&amp;cmtitle=Category:{category}&amp;cmprop=ids%7ctitle%7ctype%7ctimestamp&amp;format=xml&amp;cmcontinue={startAt}</url>
       </urls>
 
       <paging model="url">
         <nextpage path="data.paging" />
         <pagesize id="cmlimit" max="500" />
-        <total default="50"/>
+        <total default="500"/>
       </paging>
       <inputs>
-        <key id="site" type="xs:string" paramType="path" required="true" default="en.wikipedia.org"/>
+        <key id="site" type="xs:string" paramType="path" default="en.wikipedia.org"/>
         <key id="category" type="xs:string" paramType="path" required="true" />
-
+        <key id="startAt" type="xs:string" paramType="path" />
       </inputs>
       <!-- inspired by https://github.com/yql/yql-tables -> mediawikiapi/mediawikiapi.test.recentchanges.xml (Jul 19, 2012 07b6a71f6905b6d9e808116232d7fdda62cdf1d6)-->
       <execute><![CDATA[
@@ -33,14 +33,19 @@
         var cmcontinue = y.xpath(rsp, '/api/query-continue/categorymembers/@cmcontinue');
 
         var result = <data/>;
-        // add fetched results
-        result.data += fetchedData;
 
         if(cmcontinue) {
+		  y.log('length='+fetchedData.length());
+		  if(fetchedData && fetchedData.length()>0) {
+			fetchedData[fetchedData.length()-1].@continueAt = cmcontinue;
+		  }
           var paging = <paging/>;
-          paging.paging += baseUrl + '&cmcontinue=' + encodeURIComponent(cmcontinue);
-          result.data += paging;
+          
+		  result.@paging = baseUrl + '&cmcontinue=' + encodeURIComponent(cmcontinue);
         }
+        // add fetched results
+        result.data += fetchedData;
+		
         response.object = result;
       ]]></execute>
     </select>
