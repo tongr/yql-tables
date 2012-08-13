@@ -9,7 +9,7 @@
 <!--<select itemPath="api.query.categorymembers.cm" produces="XML" > -->
     <select itemPath="data.cm" produces="XML" >
       <urls>
-        <url env="all">http://{site}/w/api.php?action=query&amp;list=categorymembers&amp;cmtitle=Category:{category}&amp;cmprop=ids%7ctitle%7ctype%7ctimestamp&amp;format=xml&amp;cmcontinue={startAt}</url>
+        <url env="all">http://{site}/w/api.php?action=query&amp;list=categorymembers&amp;cmtitle=Category:{category}&amp;cmprop=ids%7ctitle%7ctype%7ctimestamp&amp;format=xml&amp;{cmcontinue}</url>
       </urls>
 
       <paging model="url">
@@ -20,7 +20,7 @@
       <inputs>
         <key id="site" type="xs:string" paramType="path" default="en.wikipedia.org"/>
         <key id="category" type="xs:string" paramType="path" required="true" />
-        <key id="startAt" type="xs:string" paramType="path" />
+        <key id="cmcontinue" as="startAt" type="xs:string" paramType="query" />
       </inputs>
       <!-- inspired by https://github.com/yql/yql-tables -> mediawikiapi/mediawikiapi.test.recentchanges.xml (Jul 19, 2012 07b6a71f6905b6d9e808116232d7fdda62cdf1d6)-->
       <execute><![CDATA[
