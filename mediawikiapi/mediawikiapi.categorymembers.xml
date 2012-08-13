@@ -31,21 +31,22 @@
         // parse data
         var fetchedData = y.xpath(rsp, '/api/query/categorymembers/cm');
         var cmcontinue = y.xpath(rsp, '/api/query-continue/categorymembers/@cmcontinue');
-
         var result = <data/>;
 
         if(cmcontinue) {
-		  y.log('length='+fetchedData.length());
-		  if(fetchedData && fetchedData.length()>0) {
-			fetchedData[fetchedData.length()-1].@continueAt = cmcontinue;
-		  }
-          var paging = <paging/>;
-          
-		  result.@paging = baseUrl + '&cmcontinue=' + encodeURIComponent(cmcontinue);
+          cmcontinueStr=cmcontinue.toString();
+          if(cmcontinueStr && cmcontinueStr.length > 0) {
+            if(fetchedData && fetchedData.length()>0) {
+              fetchedData[fetchedData.length()-1].@continueAt = cmcontinueStr;
+            }
+            var paging = <paging/>;
+            
+            result.@paging = baseUrl + '&cmcontinue=' + encodeURIComponent(cmcontinueStr);
+          }
         }
         // add fetched results
         result.data += fetchedData;
-		
+        
         response.object = result;
       ]]></execute>
     </select>
