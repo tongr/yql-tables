@@ -2,7 +2,7 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
   <meta>
     <author>Toni Gruetze</author>
-	<description>HTML selector that returns the results of several ordinary html requests (<a href='http://developer.yahoo.com/yql/console/?q=show%20tables#h=desc%20html'>desc</a>) in one resultset. Suitable for use with sub-queries that return a resource uri set to be parsed.</description>
+	<description>HTML selector that returns the results of several ordinary html requests (see also http://developer.yahoo.com/yql/console/?q=show%20tables#h=desc%20html) in one resultset. Suitable for use with sub-queries that return a resource uri set to be parsed.</description>
 	<sampleQuery>select * from {table} where attr.url in ('http://en.m.wikipedia.org/wiki/Fred_Aandahl', 'http://en.m.wikipedia.org/wiki/Henry_Aaron') and xpath='//a[@href]'</sampleQuery>
 	<sampleQuery>select * from {table} where uritemplate='http://en.m.wikipedia.org/wiki/{title}' and attr.title in ('Fred_Aandahl', 'Henry_Aaron') and xpath='//a[@href]'</sampleQuery>
 	<sampleQuery>select * from {table} where uritemplate='http://en.m.wikipedia.org/{relative}' and attr.relative in (select href from html where url = 'http://en.m.wikipedia.org/wiki/Fred_Aandahl' and xpath='//a[@href]') and xpath='//a[@href]'</sampleQuery>
