@@ -32,26 +32,27 @@
         var fetchedData = y.xpath(rsp, '/api/query/categorymembers/cm');
         var cmcontinue = y.xpath(rsp, '/api/query-continue/categorymembers/@cmcontinue');
         var result = <data/>;
-		
-		// add url to the data
-		for(var i=0;i<fetchedData.length();i++) {
-		  if(fetchedData[i].@title) {
-		    var url = 'http://' + site + '/wiki/';
-			url += fetchedData[i].@title.toString();
-			url = url.replace(/\s/g,'_');
-		    fetchedData[i].@url = url;
-		    fetchedData[i].@url_mobile = url.replace(/(.+:\/\/.*\.)([^\.\/]+\.[^\.\/]+\/.*)/, '$1m.$2');
-		  }
-		}
-
+        
+        // add url to the data
+        for(var i=0;i<fetchedData.length();i++) {
+          if(fetchedData[i].@title) {
+            var url = 'http://' + site + '/wiki/';
+            url += fetchedData[i].@title.toString();
+            url = url.replace(/\s/g,'_');
+            fetchedData[i].@url = url;
+            fetchedData[i].@url_mobile = url.replace(/(.+:\/\/.*\.)([^\.\/]+\.[^\.\/]+\/.*)/, '$1m.$2');
+          }
+        }
+        if(fetchedData && fetchedData.length()>0) {
+          // ugly hack
+          for(var i=0;i<fetchedData.length()-1;i++) {
+            fetchedData[i].@continueAt = '';
+          }
+        }
         if(cmcontinue) {
           cmcontinueStr=cmcontinue.toString();
           if(cmcontinueStr && cmcontinueStr.length > 0) {
             if(fetchedData && fetchedData.length()>0) {
-			  // ugly hack
-			  for(var i=0;i<fetchedData.length()-1;i++) {
-                fetchedData[i].@continueAt = '';
-			  }
               fetchedData[fetchedData.length()-1].@continueAt = cmcontinueStr;
             } 
             var paging = <paging/>;
