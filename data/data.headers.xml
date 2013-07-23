@@ -2,7 +2,7 @@
 <table xmlns:i="http://query.yahooapis.com/v1/schema/internalTable.xsd" xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
         <author>Marcel Duran</author>
-        <description>Request (GET) a URL and retrieves its content (non-binary) and headers. User Agent string (ua) and the xPath expression (xpath) are optional. Additionally, one can choose to return the HTML content as (escaped) string value (iff htmlstr!='false')</description>
+        <description>Request (GET) a URL and retrieves its content (non-binary) and headers. User Agent string (ua) and the xPath expression (xpath) are optional. Additionally, one can choose to return the HTML content as (escaped) string value, iff htmlstr=='true' (i.e., useful in case of JSON format queries)</description>
         <sampleQuery>select * from {table} where url="http://www.yahoo.com/"</sampleQuery>
         <sampleQuery>select * from {table} where url in ("http://www.yahoo.com/","http://www.google.com/") and ua="Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1)"</sampleQuery>
         <sampleQuery>select * from {table} where url in ("http://www.yahoo.com/","http://www.google.com/") and ua="Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1)" and xpath='//a' and htmlstr='true'</sampleQuery>
@@ -32,9 +32,8 @@
                     if (ua) {
                         req.header('User-Agent', ua);
                     }
+                    req.accept('text/html');
 
-					req.accept('text/html');
-					
                     // compression
                     req.header('Accept-Encoding', 'gzip,deflate');
                     req.decompress(true);
@@ -71,7 +70,7 @@
 
                     // get headers
                     headers.headers = y.jsonToXml(resp.headers);
-                    
+
                     // set result
                     data.resources += <url>{url}</url>;
                     data.resources += <status>{resp.status}</status>;
@@ -82,10 +81,12 @@
                     header = (header && header['content-type']) || '';
                     if (header.indexOf('image') && header.indexOf('x-shockwave-flash') < 0) {
                         try {
-						    content = resp.response;
-						    if (xpath) content = y.xpath(content, xpath);
-							
-							if(htmlstr!='false') content = content.toXMLString();
+                            content = resp.response;
+							// apply the xpath expression
+                            if (xpath) content = y.xpath(content, xpath);
+
+							// return html content as string
+                            if(htmlstr=='true') content = content.toXMLString();
                         } catch (err) {
                             y.log(err);
                             // empty response on error
